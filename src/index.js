@@ -8,6 +8,7 @@ import {
   useParams,
 } from "react-router-dom";
 import Pokedex from "./views/pokedex";
+import Details from "./components/details";
 
 const App = () => {
   return (
@@ -26,6 +27,9 @@ const App = () => {
         </div>
 
         <Switch>
+          <Route path="/pokemon/:name">
+            <Details />
+          </Route>
           <Route path="/pokedex/page/:page">
             <PokedexHelper />
           </Route>

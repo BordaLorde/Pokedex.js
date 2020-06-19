@@ -20,7 +20,7 @@ class Pokedex extends React.Component {
   render() {
     return (
       <div>
-        <div className="ui grid container">
+        <div className="ui grid container link cards">
           {this.state.pokemon_list.map((pokemon) => (
             <div className="four wide column" key={pokemon.name}>
               <Entry name={pokemon.name} />
