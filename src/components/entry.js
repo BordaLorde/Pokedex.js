@@ -1,6 +1,7 @@
 import { axios, fetchPokemon } from "../services/fetch_pokemon";
 import React from "react";
 import { Link } from "react-router-dom";
+import getTypeColor from "../helpers/get_type_color";
 
 class Entry extends React.Component {
   constructor(props) {
@@ -13,6 +14,7 @@ class Entry extends React.Component {
       type1: null,
       type2: null,
       loading: true,
+      loading_aux: true,
     };
 
     this.signal = axios.CancelToken.source();
@@ -31,11 +33,15 @@ class Entry extends React.Component {
     return (
       <Link to={`/pokemon/${this.props.name}`}>
         <div className="ui card">
-          <div className={`ui ${this.state.loading ? "active" : ""} dimmer`}>
+          <div
+            className={`ui ${
+              this.state.loading && this.state.loading_aux ? "active" : ""
+            } dimmer`}
+          >
             <div className="ui loader"></div>
           </div>
           <div className="image">
-            <img alt="" src={this.state.image} />
+            <img alt={`${this.props.name}`} src={this.state.image} />
           </div>
 
           <div className="content">
@@ -48,7 +54,7 @@ class Entry extends React.Component {
 
           <div className="extra content">
             <div
-              className={`ui ${this.getTypeColor(
+              className={`ui ${getTypeColor(
                 this.state.type1
               )} horizontal label`}
             >
@@ -56,7 +62,7 @@ class Entry extends React.Component {
             </div>
             {this.state.type2 && (
               <div
-                className={`ui ${this.getTypeColor(
+                className={`ui ${getTypeColor(
                   this.state.type2
                 )} horizontal label`}
               >
@@ -73,59 +79,11 @@ class Entry extends React.Component {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
-  getTypeColor(type) {
-    switch (type) {
-      case "normal":
-        return "grey";
-      case "fire":
-        return "orange";
-      case "fighting":
-        return "red";
-      case "water":
-        return "blue";
-      case "flying":
-        return "teal";
-      case "grass":
-        return "green";
-      case "poison":
-        return "purple";
-      case "electric":
-        return "yellow";
-      case "ground":
-        return "brown";
-      case "psychic":
-        return "pink";
-      case "rock":
-        return "brown";
-      case "ice":
-        return "teal";
-      case "bug":
-        return "olive";
-      case "dragon":
-        return "violet";
-      case "ghost":
-        return "purple";
-      case "dark":
-        return "black";
-      case "steel":
-        return "grey";
-      case "fairy":
-        return "pink";
-      default:
-    }
-  }
-
   fetchPokemonInfo() {
     fetchPokemon
       .fetchPokemonInfo(this.props.name, this.signal)
       .then((result) => {
         this.setState({
-          image:
-            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" +
-            result.data.pokedex_numbers.filter(
-              (entry) => entry.pokedex.name === "national"
-            )[0].entry_number +
-            ".png",
           genus: result.data.genera.filter(
             (genus) => genus.language.name === "en"
           )[0].genus,
@@ -140,7 +98,6 @@ class Entry extends React.Component {
       .catch((error) => {
         if (!axios.isCancel(error)) {
           this.setState({
-            image: null,
             genus: null,
             entry: null,
             loading: false,
@@ -154,6 +111,8 @@ class Entry extends React.Component {
       .fetchPokemonType(this.props.name, this.signal)
       .then((result) => {
         this.setState({
+          loading_aux: false,
+          image: result.data.sprites.front_default,
           type1: result.data.types[0].type.name,
           type2: result.data.types[1] ? result.data.types[1].type.name : null,
         });
@@ -161,10 +120,10 @@ class Entry extends React.Component {
       .catch((error) => {
         if (!axios.isCancel(error)) {
           this.setState({
+            loading_aux: false,
             image: null,
-            genus: null,
-            entry: null,
-            loading: false,
+            type1: null,
+            type2: null,
           });
         }
       });
