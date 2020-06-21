@@ -150,39 +150,85 @@ class Details extends React.Component {
     }
   }
 
+  handleImageChange = () => {
+    let back = this.state.image_back;
+    let shiny = this.state.image_shiny;
+    let female = this.state.image_female;
+    let string = "";
+
+    if (back) {
+      string += "back";
+    } else {
+      string += "front";
+    }
+
+    if (shiny) {
+      string += "_shiny";
+    }
+    if (female) {
+      string += "_female";
+    }
+
+    if (string === "front" || string === "back") {
+      string += "_default";
+    }
+
+    this.setState({
+      image_state: string,
+    });
+  };
+
   onBackClick = () => {
     if (this.state.image_back) {
-      this.setState({
-        image_back: false,
-      });
+      this.setState(
+        {
+          image_back: false,
+        },
+        this.handleImageChange
+      );
     } else {
-      this.setState({
-        image_back: true,
-      });
+      this.setState(
+        {
+          image_back: true,
+        },
+        this.handleImageChange
+      );
     }
   };
 
   onFemaleClick = () => {
     if (this.state.image_female) {
-      this.setState({
-        image_female: false,
-      });
+      this.setState(
+        {
+          image_female: false,
+        },
+        this.handleImageChange
+      );
     } else {
-      this.setState({
-        image_female: true,
-      });
+      this.setState(
+        {
+          image_female: true,
+        },
+        this.handleImageChange
+      );
     }
   };
 
   onShinyClick = () => {
     if (this.state.image_shiny) {
-      this.setState({
-        image_shiny: false,
-      });
+      this.setState(
+        {
+          image_shiny: false,
+        },
+        this.handleImageChange
+      );
     } else {
-      this.setState({
-        image_shiny: true,
-      });
+      this.setState(
+        {
+          image_shiny: true,
+        },
+        this.handleImageChange
+      );
     }
   };
 
