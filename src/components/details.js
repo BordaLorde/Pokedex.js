@@ -91,11 +91,16 @@ class Details extends React.Component {
                     <button className="ui button" onClick={this.onBackClick}>
                       Back
                     </button>
-                    <button className="ui button" onClick={this.onFemaleClick}>
-                      Female
-                    </button>
                     <button className="ui button" onClick={this.onShinyClick}>
                       Shiny
+                    </button>
+                    <button
+                      className={`ui ${
+                        !this.state.image.back_female && "disabled"
+                      } button`}
+                      onClick={this.onFemaleClick}
+                    >
+                      Female
                     </button>
                   </div>
                 </div>
