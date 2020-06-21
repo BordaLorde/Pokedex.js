@@ -2,6 +2,7 @@ import React from "react";
 import { axios, fetchPokemon } from "../services/fetch_pokemon";
 import { withRouter } from "react-router-dom";
 import getTypeColor from "../helpers/get_type_color";
+import StatBar from "./stat_bar";
 
 class Details extends React.Component {
   constructor(props) {
@@ -15,6 +16,10 @@ class Details extends React.Component {
       stats: [],
       exists: false,
       loading: true,
+      image_state: "front_default",
+      image_back: false,
+      image_female: false,
+      image_shiny: false,
       loading_aux: true,
       name: props.match.params.name,
     };
@@ -31,34 +36,6 @@ class Details extends React.Component {
     this.signal.cancel();
   }
 
-  getHP() {
-    return this.state.stats.length > 0 ? this.state.stats[0].base_stat : 0;
-  }
-
-  getATK() {
-    return this.state.stats.length > 0 ? this.state.stats[1].base_stat : 0;
-  }
-
-  getDEF() {
-    return this.state.stats.length > 0 ? this.state.stats[2].base_stat : 0;
-  }
-
-  getSpATK() {
-    return this.state.stats.length > 0 ? this.state.stats[3].base_stat : 0;
-  }
-
-  getSpDEF() {
-    return this.state.stats.length > 0 ? this.state.stats[4].base_stat : 0;
-  }
-
-  getSPD() {
-    return this.state.stats.length > 0 ? this.state.stats[5].base_stat : 0;
-  }
-
-  getPercentageStat(base_stat) {
-    return (100 * base_stat) / 255;
-  }
-
   render() {
     return (
       <div>
@@ -67,59 +44,21 @@ class Details extends React.Component {
           <div className="ui hidden divider"></div>
           <div className="ui mobile reversed stackable grid">
             <div className="twelve wide column">
-              <div class="ui progress">
-                <div
-                  class="bar"
-                  style={{ width: `${this.getPercentageStat(this.getHP())}%` }}
-                />
-                <div class="label">{this.getHP()}</div>
-              </div>
-              <div class="ui progress">
-                <div
-                  class="bar"
-                  style={{ width: `${this.getPercentageStat(this.getATK())}%` }}
-                />
-                <div class="label">{this.getATK()}</div>
-              </div>
-              <div class="ui progress">
-                <div
-                  class="bar"
-                  style={{ width: `${this.getPercentageStat(this.getDEF())}%` }}
-                />
-                <div class="label">{this.getDEF()}</div>
-              </div>
-              <div class="ui progress">
-                <div
-                  class="bar"
-                  style={{
-                    width: `${this.getPercentageStat(this.getSpATK())}%`,
-                  }}
-                />
-                <div class="label">{this.getSpATK()}</div>
-              </div>
-              <div class="ui progress">
-                <div
-                  class="bar"
-                  style={{
-                    width: `${this.getPercentageStat(this.getSpDEF())}%`,
-                  }}
-                />
-                <div class="label">{this.getSpDEF()}</div>
-              </div>
-              <div class="ui progress">
-                <div
-                  class="bar"
-                  style={{ width: `${this.getPercentageStat(this.getSPD())}%` }}
-                />
-                <div class="label">{this.getSPD()}</div>
-              </div>
+              {this.state.stats.length > 0 &&
+                this.state.stats.map((item, index) => (
+                  <StatBar
+                    key={index}
+                    stat_name={item.stat.name}
+                    stat={item.base_stat}
+                  />
+                ))}
             </div>
             <div className="four wide column">
               <div className="ui card">
                 <div className="image">
                   <img
                     alt={this.state.name}
-                    src={this.state.image["front_default"]}
+                    src={this.state.image[this.state.image_state]}
                   />
                 </div>
                 <div className="content">
@@ -148,10 +87,16 @@ class Details extends React.Component {
                   <div className="description"></div>
                 </div>
                 <div className="extra content">
-                  <div className="ui three buttons">
-                    <button className="ui button">Front</button>
-                    <button className="ui button">Back</button>
-                    <button className="ui button">Shiny</button>
+                  <div className="ui four buttons">
+                    <button className="ui button" onClick={this.onBackClick}>
+                      Back
+                    </button>
+                    <button className="ui button" onClick={this.onFemaleClick}>
+                      Female
+                    </button>
+                    <button className="ui button" onClick={this.onShinyClick}>
+                      Shiny
+                    </button>
                   </div>
                 </div>
               </div>
@@ -161,11 +106,22 @@ class Details extends React.Component {
           <div className="ui hidden divider"></div>
           {this.entriesList()[this.state.entry_page]}
           <div className="ui two buttons">
-            <button className={`ui labeled icon left floated button`}>
+            <button
+              className={`ui labeled icon left floated button ${
+                this.state.entry_page === 0 && "disabled"
+              }`}
+              onClick={this.onPrevClick}
+            >
               <i className="left arrow icon"></i>
               Previous Entry
             </button>
-            <button className={`ui right labeled icon button`}>
+            <button
+              className={`ui right labeled icon button ${
+                this.state.entry_page >= this.state.entries.length - 1 &&
+                "disabled"
+              }`}
+              onClick={this.onNextClick}
+            >
               <i className="right arrow icon"></i>
               Next Entry
             </button>
@@ -193,6 +149,54 @@ class Details extends React.Component {
         return this.capitalize(name);
     }
   }
+
+  onBackClick = () => {
+    if (this.state.image_back) {
+      this.setState({
+        image_back: false,
+      });
+    } else {
+      this.setState({
+        image_back: true,
+      });
+    }
+  };
+
+  onFemaleClick = () => {
+    if (this.state.image_female) {
+      this.setState({
+        image_female: false,
+      });
+    } else {
+      this.setState({
+        image_female: true,
+      });
+    }
+  };
+
+  onShinyClick = () => {
+    if (this.state.image_shiny) {
+      this.setState({
+        image_shiny: false,
+      });
+    } else {
+      this.setState({
+        image_shiny: true,
+      });
+    }
+  };
+
+  onPrevClick = () => {
+    this.setState((state) => ({
+      entry_page: state.entry_page - 1,
+    }));
+  };
+
+  onNextClick = () => {
+    this.setState((state) => ({
+      entry_page: state.entry_page + 1,
+    }));
+  };
 
   capitalize(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -247,7 +251,6 @@ class Details extends React.Component {
           type1: result.data.types[0].type.name,
           type2: result.data.types[1] ? result.data.types[1].type.name : null,
         });
-        console.log(this.state.stats[0].base_stat);
       })
       .catch((error) => {
         if (!axios.isCancel(error)) {
