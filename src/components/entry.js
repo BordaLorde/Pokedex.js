@@ -5,7 +5,7 @@ import getTypeColor from "../helpers/get_type_color";
 
 class Entry extends React.Component {
   constructor(props) {
-    super(props);
+    super();
 
     this.state = {
       image: null,
@@ -23,6 +23,13 @@ class Entry extends React.Component {
   componentDidMount() {
     this.fetchPokemonInfo();
     this.fetchPokemonType();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps !== this.props) {
+      this.fetchPokemonInfo();
+      this.fetchPokemonType();
+    }
   }
 
   componentWillUnmount() {

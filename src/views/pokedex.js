@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 class Pokedex extends React.Component {
   constructor(props) {
-    super(props);
+    super();
     this.state = { pokemon_list: [], error: false, previous: null, next: null };
   }
 

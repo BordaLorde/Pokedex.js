@@ -8,6 +8,7 @@ import {
   useParams,
 } from "react-router-dom";
 import Pokedex from "./views/pokedex";
+import TeamBuilder from "./views/team_builder";
 import Details from "./components/details";
 
 const App = () => {
@@ -54,7 +55,7 @@ function Home() {
 }
 
 function Builder() {
-  return <h2>Users</h2>;
+  return <TeamBuilder />;
 }
 
 ReactDOM.render(<App />, document.querySelector("#root"));

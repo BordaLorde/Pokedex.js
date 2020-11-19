@@ -6,7 +6,7 @@ import StatBar from "./stat_bar";
 
 class Details extends React.Component {
   constructor(props) {
-    super(props);
+    super();
 
     this.state = {
       image: {},
